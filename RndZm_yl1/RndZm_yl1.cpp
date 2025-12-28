@@ -1,6 +1,7 @@
 ﻿#include "SDL3/SDL.h"
 #include "SDL3/SDL_main.h"
 #include "RndZm_yl1.h"
+#include "SDL3_image/SDL_image.h"
 
 
 using namespace std;
@@ -48,6 +49,11 @@ int main(int argc, char *argv[])
 
 	}
 
+	//loading game assets
+	SDL_Texture* idleTex = IMG_LoadTexture(state.renderer, "assets/playerAnimation/idle.png");
+
+
+
 
 	//Main game loop
 
@@ -80,6 +86,7 @@ int main(int argc, char *argv[])
 
 	}
 
+	SDL_DestroyTexture(idleTex);
 	cleanup(state);
 	return 0;
 }
