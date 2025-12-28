@@ -1,0 +1,17 @@
+﻿{
+  "version": 3,
+  "configurePresets": [
+
+    {
+      "name": "x64-debug-user",
+      "displayName": "x64 Debug (USER)",
+      "inherits": "x64-debug",
+
+      "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "C:\\Users\\YLooM\\SDK\\SDL3-3.2.28"
+      }
+    }
+
+
+  ]
+}
