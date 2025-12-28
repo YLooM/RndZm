@@ -7,6 +7,8 @@ find_package(SDL3 REQUIRED)
 
 add_executable (RndZm_yl1 "RndZm_yl1.cpp" "RndZm_yl1.h")
 
+target_link_libraries(RndZm_yl1 PRIVATE SDL3::SDL3)
+
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET RndZm_yl1 PROPERTY CXX_STANDARD 20)
 endif()
