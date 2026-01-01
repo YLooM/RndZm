@@ -2,6 +2,8 @@
 #include "SDL3/SDL_main.h"
 #include "RndZm_yl1.h"
 #include "SDL3_image/SDL_image.h"
+#include <cmath>
+
 
 
 using namespace std;
@@ -15,6 +17,7 @@ struct SDLState
 
 bool initialize(SDLState& state);
 void cleanup(SDLState& state);
+SDL_FPoint GetMouseLogical(const SDLState& state);
 
 int main(int argc, char *argv[])
 {
@@ -23,6 +26,9 @@ int main(int argc, char *argv[])
 	state.height = 720;
 	state.logW = 640;
 	state.logH = 320;
+
+	constexpr float PLAYER_SIZE = 32.0f;
+	constexpr float PLAYER_HALF = PLAYER_SIZE * 0.5f;
 
 	if (!initialize(state)) {
 		return 1;
@@ -33,6 +39,20 @@ int main(int argc, char *argv[])
 	SDL_SetTextureScaleMode(idleTex, SDL_SCALEMODE_NEAREST);
 
 
+	//setup game data
+
+	//Keyboard movement
+	const bool *keys = SDL_GetKeyboardState(nullptr);
+	float playerX = 0.0f;
+	float playerY = 0.0f;
+	const float playerSpeed = 150.0f;
+
+	//mouse input
+	float playerAngle = 0.0f;
+
+
+	//tick
+	Uint64 lastTicks = SDL_GetTicks();
 
 
 	//Main game loop
@@ -59,6 +79,31 @@ int main(int argc, char *argv[])
 			}
 		
 		}
+		//Timing ticks
+		Uint64 currentTicks = SDL_GetTicks();
+		float deltaTime = (currentTicks - lastTicks) / 1000.0f;
+		lastTicks = currentTicks;
+
+		//Input movement keys
+		if (keys[SDL_SCANCODE_A]) playerX -= playerSpeed * deltaTime;
+		if (keys[SDL_SCANCODE_D]) playerX += playerSpeed * deltaTime;
+		if (keys[SDL_SCANCODE_W]) playerY -= playerSpeed * deltaTime;
+		if (keys[SDL_SCANCODE_S]) playerY += playerSpeed * deltaTime;
+
+		//Input movement mouse
+		SDL_FPoint mouse = GetMouseLogical(state);
+
+
+
+		float dx = mouse.x - (playerX + PLAYER_HALF);
+		float dy = mouse.y - (playerY + PLAYER_HALF);
+
+
+		playerAngle = atan2f(dy, dx) * 180.0f / SDL_PI_F + 90.0f;
+
+
+
+
 	
 		//Drawing
 		
@@ -74,14 +119,23 @@ int main(int argc, char *argv[])
 
 
 		SDL_FRect dst{
-			.x = 0,
-			.y = 0,
+			.x = playerX,
+			.y = playerY,
 			.w = 32,
 			.h = 32
 		};
 
 
-		SDL_RenderTexture(state.renderer, idleTex , &src , &dst);
+		SDL_RenderTextureRotated(
+			state.renderer,
+			idleTex,
+			&src,
+			&dst,
+			playerAngle,
+			nullptr,
+			SDL_FLIP_NONE
+		);
+
 
 
 		//flip backbufer to front
@@ -137,4 +191,14 @@ void cleanup(SDLState &state) {
 	SDL_DestroyWindow(state.window);
 	SDL_Quit();
 
+}
+SDL_FPoint GetMouseLogical(const SDLState& state)
+{
+	float x, y;
+	SDL_GetMouseState(&x, &y);
+
+	x *= (float)state.logW / state.width;
+	y *= (float)state.logH / state.height;
+
+	return { x, y };
 }
