@@ -8,7 +8,7 @@
       "inherits": "x64-debug",
 
       "cacheVariables": {
-        "CMAKE_PREFIX_PATH": "C:\\Users\\YLooM\\SDK\\SDL3-3.2.28"
+        "CMAKE_PREFIX_PATH": "C:\\Users\\YLooM\\SDK\\SDL3-3.2.28;C:\\Users\\YLooM\\SDK\\SDL3_image-3.2.4"
       }
     }
 
